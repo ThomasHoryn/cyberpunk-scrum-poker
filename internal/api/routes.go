@@ -2,17 +2,26 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/api/handlers"
+	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/config"
 	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/db"
+	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/api/handlers"
 	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/api/validators"
 )
 
 func SetupRouter(mongoDB *db.MongoDB) *gin.Engine {
+	cfg := config.Load()
 	router := gin.Default()
-	router.Use(SecurityHeaders())
-
+	
+	router.Use(
+		CORS(cfg),
+		SecurityHeaders(),
+		RateLimiter(cfg),
+		APIKeyAuth(cfg),
+		HMACValidation(cfg),
+	)
+	
 	validators.RegisterValidators()
-
+	
 	roomHandler := handlers.NewRoomHandler(mongoDB)
 
 	v1 := router.Group("/api/v1")
@@ -29,13 +38,4 @@ func SetupRouter(mongoDB *db.MongoDB) *gin.Engine {
 	})
 
 	return router
-}
-
-func SecurityHeaders() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Header("X-Content-Type-Options", "nosniff")
-		c.Header("X-Frame-Options", "DENY")
-		c.Header("Content-Security-Policy", "default-src 'self'")
-		c.Next()
-	}
 }

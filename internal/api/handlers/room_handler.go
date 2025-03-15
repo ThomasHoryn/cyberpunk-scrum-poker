@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"time"
-	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/db"
@@ -29,7 +29,9 @@ func (h *RoomHandler) CreateRoom(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid room name, only alphanumeric characters and spaces allowed (3-50 characters)"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid room name. Use 3-50 alphanumeric characters and spaces",
+		})
 		return
 	}
 

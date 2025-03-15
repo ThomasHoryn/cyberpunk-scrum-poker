@@ -8,6 +8,8 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"crypto/tls"
+	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/config"
 )
 
 type MongoDB struct {
@@ -22,9 +24,18 @@ func NewMongoDB(uri string) (*MongoDB, error) {
 	opts := options.Client().
 		ApplyURI(uri).
 		SetMaxPoolSize(100).
-		SetMinPoolSize(4)
+		SetMinPoolSize(4).
+		SetServerSelectionTimeout(5 * time.Second)
 
-	client, err := mongo.Connect(ctx, opts)
+	// Add TLS configuration only in production
+	if config.Load().Environment == "production" {
+		opts.SetTLSConfig(&tls.Config{
+			InsecureSkipVerify: false,
+			MinVersion:         tls.VersionTLS12,
+		})
+	}
+
+	client, err := mongo.Connect(ctx, opts)	
 	if err != nil {
 		return nil, fmt.Errorf("mongo connection failed: %w", err)
 	}
