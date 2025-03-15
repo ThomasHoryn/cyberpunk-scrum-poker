@@ -3,25 +3,25 @@ package models
 import (
 	"time"
 	
-	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Room struct {
-	ID        string    `json:"id" bson:"_id"`
-	Name      string    `json:"name" bson:"name"`
-	CreatedAt time.Time `json:"created_at" bson:"created_at"`
-	Users     []User    `json:"users" bson:"users"`
+	ID        primitive.ObjectID `bson:"_id"`
+	Name      string             `bson:"name"`
+	CreatedAt time.Time          `bson:"created_at"`
+	Users     []User             `bson:"users"`
 }
 
 type User struct {
-	ID       string    `json:"id" bson:"id"`
-	Username string    `json:"username" bson:"username"`
-	JoinedAt time.Time `json:"joined_at" bson:"joined_at"`
+	ID       string    `bson:"id"`
+	Username string    `bson:"username"`
+	JoinedAt time.Time `bson:"joined_at"`
 }
 
 func NewRoom(name string) *Room {
 	return &Room{
-		ID:        uuid.New().String(),
+		ID:        primitive.NewObjectID(),
 		Name:      name,
 		CreatedAt: time.Now().UTC(),
 		Users:     make([]User, 0),
