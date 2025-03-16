@@ -7,12 +7,15 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/db"
 	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/models"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"encoding/json"
+	"io"
 )
 
 type RoomHandler struct {
@@ -24,16 +27,51 @@ func NewRoomHandler(db *db.MongoDB) *RoomHandler {
 }
 
 func (h *RoomHandler) CreateRoom(c *gin.Context) {
-	var request struct {
-		Name string `json:"name" binding:"required,min=3,max=50,alphanumspace"`
-	}
+var request struct {
+    Name string `json:"name" binding:"required,min=3,max=50,alphanumspacebrackets"`
+}
+ 
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid room name. Use 3-50 alphanumeric characters and spaces",
-		})
-		return
-	}
+    if err := c.ShouldBindJSON(&request); err != nil {
+        // Handle JSON parsing errors first
+        if errors.Is(err, io.EOF) {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Empty request body"})
+            return
+        }
+
+        // Handle validation errors
+        if fieldErrors, ok := err.(validator.ValidationErrors); ok {
+            for _, fieldErr := range fieldErrors {
+                switch fieldErr.Tag() {
+                case "required":
+                    c.JSON(http.StatusBadRequest, gin.H{"error": "Room name is required"})
+                case "min":
+                    c.JSON(http.StatusBadRequest, gin.H{"error": "Minimum 3 characters"})
+                case "max":
+                    c.JSON(http.StatusBadRequest, gin.H{"error": "Maximum 50 characters"})
+case "alphanumspacebrackets":
+    c.JSON(http.StatusBadRequest, gin.H{
+        "error": "Only letters, numbers, spaces, hyphens, underscores and brackets [] allowed",
+    })
+
+                default:
+                    c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed"})
+                }
+                return
+            }
+        }
+
+        // Handle other JSON errors
+        if jsonErr, ok := err.(*json.SyntaxError); ok {
+            log.Printf("JSON syntax error: %v", jsonErr)
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+            return
+        }
+
+        // Fallback error
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
+        return
+    }
 
 	newRoom := models.NewRoom(request.Name)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

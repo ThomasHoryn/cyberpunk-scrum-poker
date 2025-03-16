@@ -23,7 +23,7 @@ func Load() *Config {
 		ServerPort:    getEnv("PORT", "8054"),
 		Environment:   getEnv("ENVIRONMENT", "development"),
 		APIKey:        getEnv("API_KEY", "cyberpunk_dev_2025"),
-		AllowedHosts:  strings.Split(getEnv("ALLOWED_HOSTS", "http://localhost:3000"), ","),
+		AllowedHosts:  strings.Split(getEnv("ALLOWED_HOSTS", "http://localhost:5173"), ","),
 		MongoURI:    getEnv("MONGO_URI", "mongodb://root:cyberpunkscrum_password@localhost:27017/cyberpunkscrum?authSource=admin"),
 		HMACSecret:    getEnv("HMAC_SECRET", "neonlights2077"),
 		RateLimit:     getEnvInt("RATE_LIMIT", 100),

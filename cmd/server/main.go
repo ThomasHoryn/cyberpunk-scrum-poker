@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/api"
+	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/api/validators"
 	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/config"
 	"github.com/ThomasHoryn/cyberpunk-scrum-poker/internal/db"
 )
@@ -19,6 +20,7 @@ func main() {
 	if cfg.MongoURI == "" {
 		log.Fatal("MONGO_URI environment variable is required")
 	}
+	validators.RegisterValidators()
 
 	mongoDB, err := db.NewMongoDB(cfg.MongoURI)
 	if err != nil {
