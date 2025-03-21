@@ -1,31 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-cyber-black: #0b0b0f;
-  --color-cyber-blue: #00f0ff;
-  --color-cyber-purple: #b967ff;
-  --color-cyber-pink: #ff3c98;
-  --color-cyber-yellow: #f7f71e;
-  --color-cyber-green: #0ef032;
-  --color-cyber-red: #ff3030;
-  
-  --shadow-neon-blue: 0 0 5px #00f0ff, 0 0 10px #00f0ff;
-  --shadow-neon-pink: 0 0 5px #ff3c98, 0 0 10px #ff3c98;
-  
-  --font-cyberpunk: "Orbitron", sans-serif;
-  --font-glitch: "Share Tech Mono", monospace;
+    --color-neon-yellow: oklch(0.99 0.8 85);
+    --color-neon-pink: oklch(0.95 0.7 330);
+    --color-neon-blue: oklch(0.95 0.7 200);
+    --color-dark-gray: oklch(0.1 0.02 240);
+    --color-light-gray: oklch(0.3 0.02 240);
+    --color-black: oklch(0 0 0);
 }
 
-
-:root {
-  --scanline-height: 2px;
-  --scanline-gap: 4px;
+::selection {
+    background: var(--color-neon-pink);
+    color: var(--color-black);
 }
 
-body {
-  background-color: #0b0b0f;
-  color: white;
-  overflow-x: hidden;
+::-moz-selection {
+    background: var(--color-neon-pink);
+    color: var(--color-black);
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 16px var(--color-neon-pink);
+}
+
+.bg-cover {
+    background-size: cover;
+    background-position: center;
 }
