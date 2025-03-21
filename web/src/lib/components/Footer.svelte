@@ -1,11 +1,10 @@
- <script lang="ts">
+<script lang="ts">
     import Love from "../icons/Love.svelte";
 
-    let currentYear = $state(new Date().getFullYear());
-
+    let currentYear: number = new Date().getFullYear();
 </script>
 
- <div class="fixed bottom-0 left-0 right-0 z-10 pointer-events-none">
+<div class="fixed bottom-0 left-0 right-0 z-10 pointer-events-none">
     <!-- Ultra thin separator line -->
     <div class="h-px w-full bg-gradient-to-r from-transparent via-neon-blue to-transparent opacity-20"></div>
 
@@ -30,10 +29,10 @@
         <!-- Right content - version/date -->
         <div class="pointer-events-auto opacity-40 hover:opacity-80 transition-opacity duration-300 my-1">
           <span class="text-neon-blue text-xs">
-            CYBER-SCRUM-POKER v1.0 // {{ currentYear }}
+            CYBER-SCRUM-POKER v1.0 // {currentYear}
           </span>
         </div>
       </div>
     </div>
-  </div>
+</div>
 
