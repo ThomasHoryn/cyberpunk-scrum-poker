@@ -6,6 +6,7 @@
   let roomName = $state("");
   let roomId = $state("");
   let error = $state("");
+  let copySuccess = $state(false);
 
   async function handleCreateRoom(): Promise<void> {
     if (!roomName.trim()) {
@@ -15,6 +16,7 @@
 
     error = "";
     roomId = "";
+    copySuccess = false;
 
     const request: CreateRoomRequest = { name: roomName };
     const response = await createRoom(request);
@@ -29,89 +31,86 @@
   function copyRoomId() {
     if (roomId) {
       navigator.clipboard.writeText(roomId);
+      copySuccess = true;
+      setTimeout(() => copySuccess = false, 3000);
     }
   }
 </script>
 
 <div class="flex min-h-screen relative bg-dark-gray overflow-hidden">
   <!-- Cyberpunk Pattern Background -->
-  <div
-    class="absolute inset-0 pointer-events-none opacity-5 z-0 cyber-grid"
-  ></div>
+  <div class="absolute inset-0 pointer-events-none opacity-5 z-0 cyber-grid"></div>
 
-  <!-- Left Content Column -->
-  <div
-    class="w-1/2 bg-dark-gray text-neon-yellow flex items-center justify-center p-6 md:p-8 relative z-10"
-  >
+  <!-- Content Column -->
+  <div class="w-full bg-dark-gray text-neon-yellow flex items-center justify-center p-6 md:p-8 relative z-10">
     <div class="text-center space-y-8 max-w-md">
       <h1 class="text-3xl md:text-4xl font-sans">
-        <span class="block glitch-text" data-text="Generate">Generate</span>
-        <span class="block text-neon-pink">Room ID</span>
+        <span class="block glitch-text" data-text="Cyberpunk">Cyberpunk</span>
+        <span class="block text-neon-pink">Scrum Poker</span>
       </h1>
 
-      <div
-        class="bg-light-gray p-6 border border-neon-blue shadow-neon clip-corners relative"
-      >
-        <p class="mb-6 digital-text">
-          Create a room and invite your team to the voting session:
-        </p>
+      <div class="bg-light-gray p-6 border border-neon-blue shadow-neon clip-corners relative">
+        {#if !roomId}
+          <p class="mb-6 digital-text">
+            Create a room and invite your team to the voting session:
+          </p>
 
-        <!-- Input for room name -->
-        <div class="relative mb-6">
-          <div
-            class="absolute -inset-1 bg-gradient-to-r from-neon-pink via-neon-blue to-neon-pink opacity-50 blur-sm clip-corners-sm"
-          ></div>
-          <div class="relative">
-            <input
-              type="text"
-              bind:value={roomName}
-              placeholder="Enter room name"
-              class="w-full bg-dark-gray text-neon-yellow border border-neon-blue p-3 clip-corners-sm font-mono"
-              maxlength="50"
-            />
+          <!-- Input for room name -->
+          <div class="relative mb-6">
+            <div class="absolute -inset-1 bg-gradient-to-r from-neon-pink via-neon-blue to-neon-pink opacity-50 blur-sm clip-corners-sm"></div>
+            <div class="relative">
+              <input
+                type="text"
+                bind:value={roomName}
+                placeholder="Enter room name"
+                class="w-full bg-dark-gray text-neon-yellow border border-neon-blue p-3 clip-corners-sm font-mono"
+                maxlength="50"
+              />
+            </div>
           </div>
-        </div>
 
-        <!-- Create Room Button -->
-        <div class="grid gap-4">
+          <!-- Create Room Button -->
           <button
-            onclick={handleCreateRoom}
-            aria-label="Create Room"
-            class="cyber-button-primary bg-neon-pink text-black font-bold py-3 px-6 text-lg hover:bg-neon-yellow disabled:opacity-50 disabled:cursor-not-allowed"
+            on:click={handleCreateRoom}
+            class="cyber-button-primary bg-neon-pink text-black font-bold py-3 px-6 text-lg hover:bg-neon-yellow disabled:opacity-50 disabled:cursor-not-allowed w-full"
           >
+            Create Room
           </button>
-
+        {:else}
           <!-- Room ID Display -->
-          {#if roomId}
-            <div
-              class="mt-6 p-4 bg-dark-gray border border-neon-yellow clip-corners-sm"
-            >
-              <p class="text-neon-yellow mb-2 text-xs">ROOM ID:</p>
-              <div class="flex items-center justify-between">
-                <span class="text-neon-pink font-mono tracking-wider"
-                  >{roomId}</span
-                >
-              </div>
+          <div class="mt-6 p-4 bg-dark-gray border border-neon-yellow clip-corners-sm">
+            <p class="text-neon-yellow mb-2 text-xs">ROOM ID:</p>
+            <div class="flex items-center justify-between">
+              <span class="text-neon-pink font-mono tracking-wider">{roomId}</span>
+              <button
+                on:click={copyRoomId}
+                class="cyber-button-sm bg-neon-blue text-black px-3 py-1 text-xs hover:bg-neon-yellow"
+              >
+                Copy
+              </button>
             </div>
+          </div>
+          {#if copySuccess}
+            <p class="text-neon-green text-sm mt-2">Room ID copied to clipboard!</p>
           {/if}
+        {/if}
 
-          <!-- Error Message -->
-          {#if error}
-            <div
-              class="mt-4 p-3 bg-dark-gray border border-neon-pink clip-corners-sm text-neon-pink text-sm"
-            >
-              {error}
+        <!-- Error Message -->
+        {#if error}
+          <div class="mt-6 p-4 bg-dark-gray border-2 border-neon-pink clip-corners-sm text-neon-pink">
+            <div class="flex items-center">
+              <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              <span class="font-bold">Error:</span>
             </div>
-          {/if}
-        </div>
+            <p class="mt-2">{error}</p>
+          </div>
+        {/if}
 
         <!-- Tech decoration elements -->
-        <div
-          class="absolute top-2 right-2 w-6 h-6 border-t border-r border-neon-pink"
-        ></div>
-        <div
-          class="absolute bottom-2 left-2 w-6 h-6 border-b border-l border-neon-blue"
-        ></div>
+        <div class="absolute top-2 right-2 w-6 h-6 border-t border-r border-neon-pink"></div>
+        <div class="absolute bottom-2 left-2 w-6 h-6 border-b border-l border-neon-blue"></div>
       </div>
 
       <!-- Data streaming animation -->
@@ -124,24 +123,6 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Right Image Column -->
-  <div class="w-1/2 relative clip-corners-lg overflow-hidden">
-    <div
-      class="absolute inset-0 border-2 border-neon-blue z-10 clip-corners-lg pointer-events-none"
-    ></div>
-    <div
-      class="absolute inset-0 bg-gradient-to-r from-dark-gray via-transparent to-transparent opacity-60"
-    ></div>
-
-    <!-- Tech overlay decoration -->
-    <div
-      class="absolute top-8 right-8 w-32 h-32 border-2 border-neon-pink clip-corners opacity-50"
-    ></div>
-    <div
-      class="absolute bottom-8 left-8 w-24 h-24 border-2 border-neon-yellow clip-corners opacity-30"
-    ></div>
   </div>
 </div>
 <Footer />
