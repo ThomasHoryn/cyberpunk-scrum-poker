@@ -1,70 +1,28 @@
 <script lang="ts">
   import Footer from "./components/Footer.svelte";
+  import { createRoom } from "./api/rooms.svelte";
+  import type { CreateRoomRequest } from "./api/rooms.svelte";
 
-  // Configuration
-  const API_KEY: string = "cyberpunk_dev_2025";
-  const HMAC_SECRET: string = "neonlights2077";
-  const API_URL: string = "http://localhost:8054/api/v1/rooms";
+  let roomName = $state("");
+  let roomId = $state("");
+  let error = $state("");
 
-  let roomName: string = "";
-  let roomId: string = "";
-  let isLoading: boolean = false;
-  let error: string = "";
-
-  async function createRoom(): Promise<void> {
+  async function handleCreateRoom(): Promise<void> {
     if (!roomName.trim()) {
       error = "Enter a room name, choomba!";
       return;
     }
 
-    isLoading = true;
     error = "";
     roomId = "";
 
-    try {
-      const timestamp: string = new Date().toISOString();
-      const requestBody = { name: roomName };
+    const request: CreateRoomRequest = { name: roomName };
+    const response = await createRoom(request);
 
-      // Generate HMAC signature
-      const encoder = new TextEncoder();
-      const key = await crypto.subtle.importKey(
-        "raw",
-        encoder.encode(HMAC_SECRET),
-        { name: "HMAC", hash: "SHA-256" },
-        false,
-        ["sign"],
-      );
-
-      const data = encoder.encode(JSON.stringify(requestBody) + timestamp);
-      const signatureArray = await crypto.subtle.sign("HMAC", key, data);
-      const signature = Array.from(new Uint8Array(signatureArray))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-
-      // Send request
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": API_KEY,
-          "X-Timestamp": timestamp,
-          "X-Signature": signature,
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const responseData = await response.json();
-
-      if (response.ok) {
-        roomId = responseData.id;
-      } else {
-        error =
-          responseData.error || "System malfunction! Couldn't create room.";
-      }
-    } catch (err) {
-      error = `Error: ${err instanceof Error ? err.message : "Unknown error - system crashed!"}`;
-    } finally {
-      isLoading = false;
+    if (response.error) {
+      error = response.error;
+    } else if (response.data) {
+      roomId = response.data.id;
     }
   }
 
@@ -117,11 +75,10 @@
         <!-- Create Room Button -->
         <div class="grid gap-4">
           <button
-            on:click={createRoom}
-            disabled={isLoading}
+            onclick={handleCreateRoom}
+            aria-label="Create Room"
             class="cyber-button-primary bg-neon-pink text-black font-bold py-3 px-6 text-lg hover:bg-neon-yellow disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "PROCESSING..." : "CREATE ROOM"}
           </button>
 
           <!-- Room ID Display -->
@@ -134,12 +91,6 @@
                 <span class="text-neon-pink font-mono tracking-wider"
                   >{roomId}</span
                 >
-                <button
-                  on:click={copyRoomId}
-                  class="cyber-button-sm bg-neon-blue text-black text-xs py-1 px-3 ml-2"
-                >
-                  COPY
-                </button>
               </div>
             </div>
           {/if}
