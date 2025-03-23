@@ -9,18 +9,6 @@
   let error = $state("");
   let copySuccess = $state(false);
 
-  let roomNameError = $state("");
-
-  function validateRoomName() {
-    if (roomName.trim().length < 3) {
-      roomNameError = "DATA INSUFFICIENT: Name requires minimum 3 characters";
-    } else if (roomName.trim().length > 30) {
-      roomNameError = "DATA OVERFLOW: Exceeds permitted character limit";
-    } else {
-      roomNameError = "";
-    }
-  }
-
   async function handleCreateRoom(): Promise<void> {
     if (!roomName.trim()) {
       error =
@@ -113,13 +101,8 @@
                 type="text"
                 bind:value={roomName}
                 placeholder="Enter room name"
-                class="w-full bg-dark-gray text-neon-yellow border {roomName.trim()
-                  ? roomName.trim().length < 3
-                    ? 'border-neon-pink'
-                    : 'border-neon-blue'
-                  : 'border-neon-blue'} p-3 clip-corners-sm font-mono"
+                class="w-full bg-dark-gray text-neon-yellow border border-neon-blue p-3 clip-corners-sm font-mono"
                 maxlength="50"
-                oninput={validateRoomName}
               />
             </div>
           </div>
