@@ -2,6 +2,7 @@
   import Footer from "./components/Footer.svelte";
   import { createRoom } from "./api/rooms.svelte";
   import type { CreateRoomRequest } from "./api/rooms.svelte";
+  import { fade } from "svelte/transition";
 
   let roomName = $state("");
   let roomId = $state("");
@@ -24,15 +25,6 @@
     if (!roomName.trim()) {
       error =
         "ERR//0x734: INPUT VOID - Enter a valid room identifier, choomba!";
-      // Add screen shake animation
-      document
-        .querySelector(".bg-light-gray")
-        ?.classList.add("cyber-error-shake");
-      setTimeout(() => {
-        document
-          .querySelector(".bg-light-gray")
-          ?.classList.remove("cyber-error-shake");
-      }, 500);
       return;
     }
 
@@ -50,21 +42,11 @@
     const response = await createRoom(request);
 
     if (response.error) {
-      // Add cyberpunk-themed prefix to error messages
       error = `SYS_FAILURE//0x${Math.floor(Math.random() * 999)
         .toString(16)
         .padStart(3, "0")}: ${response.error}`;
     } else if (response.data) {
       roomId = response.data.id;
-      // Add success animation
-      document
-        .querySelector(".bg-light-gray")
-        ?.classList.add("cyber-success-flash");
-      setTimeout(() => {
-        document
-          .querySelector(".bg-light-gray")
-          ?.classList.remove("cyber-success-flash");
-      }, 1000);
     }
   }
 
@@ -100,6 +82,26 @@
           <p class="mb-6 digital-text">
             Create a room and invite your team to the voting session:
           </p>
+        <!-- Error Message -->
+        {#if error}
+          <div
+            class="mt-6 mb-8 p-4 bg-dark-gray border-2 border-neon-pink clip-corners-sm text-neon-pink cyber-error-panel"
+            transition:fade={{ duration: 300 }}
+          >
+            <div class="flex items-center">
+              <div class="cyber-error-warning mr-2">!</div>
+              <span class="font-bold digital-text">ERROR_DETECTED:</span>
+            </div>
+            <div class="mt-2 font-mono relative overflow-hidden">
+              <span class="error-text">{error}</span>
+              <div
+                class="absolute top-0 left-0 w-full h-6 cyber-error-scanline"
+              ></div>
+            </div>
+            <div class="cyber-error-corner-tl"></div>
+            <div class="cyber-error-corner-br"></div>
+          </div>
+        {/if}
 
           <!-- Input for room name -->
           <div class="relative mb-6">
@@ -119,18 +121,6 @@
                 maxlength="50"
                 oninput={validateRoomName}
               />
-
-              {#if roomNameError && roomName.trim()}
-                <div class="mt-2 cyber-error-container">
-                  <div class="cyber-error-glitch"></div>
-                  <div class="cyber-error-content">
-                    <div class="mr-2 cyber-error-icon">!</div>
-                    <p class="digital-text text-sm error-message">
-                      {roomNameError}
-                    </p>
-                  </div>
-                </div>
-              {/if}
             </div>
           </div>
 
@@ -166,25 +156,6 @@
           {/if}
         {/if}
 
-        <!-- Error Message -->
-        {#if error}
-          <div
-            class="mt-6 p-4 bg-dark-gray border-2 border-neon-pink clip-corners-sm text-neon-pink cyber-error-panel"
-          >
-            <div class="flex items-center">
-              <div class="cyber-error-warning mr-2">!</div>
-              <span class="font-bold digital-text">ERROR_DETECTED:</span>
-            </div>
-            <div class="mt-2 font-mono relative overflow-hidden">
-              <span class="error-text">{error}</span>
-              <div
-                class="absolute top-0 left-0 w-full h-full cyber-error-scanline"
-              ></div>
-            </div>
-            <div class="cyber-error-corner-tl"></div>
-            <div class="cyber-error-corner-br"></div>
-          </div>
-        {/if}
 
         <!-- Tech decoration elements -->
         <div
@@ -234,19 +205,6 @@
       calc(100% - 5px) 100%,
       5px 100%,
       0 calc(100% - 5px)
-    );
-  }
-
-  .clip-corners-lg {
-    clip-path: polygon(
-      0 20px,
-      20px 0,
-      calc(100% - 20px) 0,
-      100% 20px,
-      100% calc(100% - 20px),
-      calc(100% - 20px) 100%,
-      20px 100%,
-      0 calc(100% - 20px)
     );
   }
 
