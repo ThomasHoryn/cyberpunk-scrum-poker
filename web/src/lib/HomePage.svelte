@@ -72,7 +72,7 @@
           <!-- Create Room Button -->
           <button
             onclick={handleCreateRoom}
-            class="cyber-button-primary bg-neon-pink text-black font-bold py-3 px-6 text-lg hover:bg-neon-yellow disabled:opacity-50 disabled:cursor-not-allowed w-full"
+            class="cyber-button-primary bg-neon-pink text-black cursor-pointer font-bold py-3 px-6 text-lg hover:bg-neon-yellow disabled:opacity-50 disabled:cursor-not-allowed w-full"
           >
             Create Room
           </button>
