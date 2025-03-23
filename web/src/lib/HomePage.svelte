@@ -71,7 +71,7 @@
 
           <!-- Create Room Button -->
           <button
-            on:click={handleCreateRoom}
+            onclick={handleCreateRoom}
             class="cyber-button-primary bg-neon-pink text-black font-bold py-3 px-6 text-lg hover:bg-neon-yellow disabled:opacity-50 disabled:cursor-not-allowed w-full"
           >
             Create Room
@@ -83,7 +83,7 @@
             <div class="flex items-center justify-between">
               <span class="text-neon-pink font-mono tracking-wider">{roomId}</span>
               <button
-                on:click={copyRoomId}
+                onclick={copyRoomId}
                 class="cyber-button-sm bg-neon-blue text-black px-3 py-1 text-xs hover:bg-neon-yellow"
               >
                 Copy
