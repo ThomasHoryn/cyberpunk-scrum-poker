@@ -8,7 +8,43 @@
     --color-dark-gray: oklch(0.1 0.02 240);
     --color-light-gray: oklch(0.3 0.02 240);
     --color-black: oklch(0 0 0);
+
+    --spacing-1: 0.25rem;
+    /* 4px */
+    --spacing-2: 0.5rem;
+    /* 8px */
+    --spacing-3: 0.75rem;
+    /* 12px */
+    --spacing-4: 1rem;
+    /* 16px */
+    --spacing-6: 1.5rem;
+    /* 24px */
+    --spacing-8: 2rem;
+    /* 32px */
+    --spacing-12: 3rem;
+    /* 48px */
+    --spacing-16: 4rem;
+    /* 64px */
 }
+
+@layer base {
+    h1 {
+        @apply text-4xl font-bold text-neon-yellow mb-6;
+    }
+
+    h2 {
+        @apply text-3xl font-semibold text-neon-pink mb-4;
+    }
+
+    h3 {
+        @apply text-2xl font-medium text-neon-blue mb-3;
+    }
+
+    h4 {
+        @apply text-xl font-medium text-neon-yellow mb-2;
+    }
+}
+
 
 ::selection {
     background: var(--color-neon-pink);
